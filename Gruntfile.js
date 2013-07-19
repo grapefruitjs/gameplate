@@ -5,19 +5,21 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-qunit');
     grunt.loadNpmTasks('grunt-contrib-yuidoc');
+    grunt.loadNpmTasks('grunt-contrib-requirejs');
 
     //Project Configuration
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         dirs: {
+            build: 'docs',
             docs: 'docs',
             src: 'src',
-            test: 'test',
-            tools: 'tools'
+            test: 'test'
         },
         files: {
             srcBlob: '<%= dirs.src %>/**/*.js',
-            testBlob: '<%= dirs.test %>/**/*.js'
+            testBlob: '<%= dirs.test %>/**/*.js',
+            build: '<%= dirs.build %>/<%= pkg.name %>'
         },
         jshint: {
             all: ['<%= files.srcBlob %>', '<%= files.testBlob %>'],
@@ -93,7 +95,7 @@ module.exports = function(grunt) {
         },
         yuidoc: {
             compile: {
-                name: '<%= pkg.name %>',
+                name: '<%= pkg.longName %>',
                 description: '<%= pkg.description %>',
                 version: '<%= pkg.version %>',
                 url: '<%= pkg.homepage %>',
@@ -102,13 +104,28 @@ module.exports = function(grunt) {
                     outdir: '<%= dirs.docs %>'
                 }
             }
+        },
+        requirejs: {
+            compile: {
+                options: {
+                    baseUrl: '<%= dirs.src %>',
+                    mainConfigFile: 'main.js',
+                    out: '<%= files.build %>',
+                    wrap: true
+                }
+            }
         }
     });
 
-    //Load tasks
-    grunt.registerTask('default', ['jshint', 'test']);
-    grunt.registerTask('test', ['connect:qunit', 'qunit']);
-    grunt.registerTask('docs', ['yuidoc']);
-    grunt.registerTask('serve', ['connect:serve']);
-    grunt.registerTask('server', ['connect:serve']);
+    //default task
+    grunt.registerTask('default', ['hint', 'test', 'build']);
+
+    //main tasks
+    grunt.registerTask('build', ['requirejs:compile']);
+    grunt.registerTask('test', ['connect:qunit', 'qunit:all']);
+    grunt.registerTask('hint', ['jshint:all']);
+
+    //extras
+    grunt.registerTask('docs', ['yuidoc:compile']);
+    grunt.registerTask('dev', ['connect:serve']);
 };

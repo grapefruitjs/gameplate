@@ -7,14 +7,14 @@
     "author": "Chad Engler <englercj@live.com>",
     "contributors": [],
 
-    "homepage": "https://none",
-    "bugs": "https://none",
+    "homepage": "https://github.com/user/repo",
+    "bugs": "https://github.com/user/repo/issues",
     "license": "none",
     "licenseUrl": "http://none",
 
     "repository": {
         "type": "git",
-        "url": "https://none"
+        "url": "https://github.com/user/repo.git"
     },
 
     "devDependencies": {},
@@ -24,12 +24,13 @@
         "grunt-contrib-jshint": "0.x",
         "grunt-contrib-connect": "0.x",
         "grunt-contrib-qunit": "0.x",
-        "grunt-contrib-yuidoc": "0.x"
+        "grunt-contrib-yuidoc": "0.x",
+        "grunt-contrib-requirejs": "0.x"
     },
 
     "scripts": {
         "test": "grunt test",
-        "start": "grunt serve"
+        "start": "grunt dev"
     },
 
     "private": true

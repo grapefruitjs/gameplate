@@ -4,7 +4,9 @@
     <head>
         <meta charset="utf-8">
         <meta name="description" content="">
-        <meta name="viewport" content="width=device-width">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
         <title>My Game</title>
 
@@ -15,11 +17,15 @@
 
         <!-- App Stylesheets -->
         <link rel="stylesheet" href="css/main.css">
+
+        <!-- Zynga Viewporter lib, sets up mobile device browsers properly -->
+        <script src="js/vendor/zynga/viewporter.js"></script>
+        <script src="js/vendor/zynga/iewporter.native.js"></script>
     </head>
 
     <body>
         <!-- Main Content -->
-        <section id="game-container">
+        <section id="viewporter">
             <div id="game"></div>
         </section>
 

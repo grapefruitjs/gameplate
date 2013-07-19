@@ -2,4 +2,4 @@
 
 cd ../grapefruit &&
 grunt build &&
-cp build/gf.js ../webstone/js/vendor/gf.js
+cp build/gf.js ../dir/js/vendor/gf.js
