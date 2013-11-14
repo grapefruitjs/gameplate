@@ -8,10 +8,8 @@ define([
         $game,
         game;
 
-    $win.on('resize', onWindowResize);
-
     function create(obj) {
-        $game = $('#' + obj.containerId); 
+        $game = $('#' + obj.containerId);
         game = new gf.Game(obj.containerId, {
             gravity: obj.gravity || 0,
             friction: obj.friction || 0,
@@ -49,7 +47,9 @@ define([
         game.resize(w, h);
     }
 
+    $win.on('resize', onWindowResize);
+
     return {
         start: create
-    }
+    };
 });

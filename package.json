@@ -17,20 +17,21 @@
         "url": "https://github.com/user/repo.git"
     },
 
-    "devDependencies": {},
-    "dependencies": {
-        "grunt": "0.4.x",
-        "grunt-cli": "0.x",
-        "grunt-contrib-jshint": "0.x",
-        "grunt-contrib-connect": "0.x",
-        "grunt-contrib-qunit": "0.x",
-        "grunt-contrib-yuidoc": "0.x",
-        "grunt-contrib-requirejs": "0.x"
+    "dependencies": {},
+    "devDependencies": {
+        "grunt": "~0.4.1",
+        "grunt-contrib-jshint": "git+https://github.com/englercj/grunt-contrib-jshint",
+        "grunt-contrib-connect": "~0.5",
+        "grunt-contrib-yuidoc": "~0.5",
+        "grunt-contrib-requirejs": "~0.4.1",
+        "grunt-contrib-less": "~0.8.2",
+        "grunt-contrib-watch": "~0.5",
+        "glob": "~3.2"
     },
 
     "scripts": {
-        "test": "grunt test",
-        "start": "grunt dev"
+        "build": "grunt build",
+        "test": "grunt test"
     },
 
     "private": true

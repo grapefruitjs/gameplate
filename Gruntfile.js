@@ -1,95 +1,52 @@
-var path = require('path');
-
 module.exports = function(grunt) {
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-connect');
-    grunt.loadNpmTasks('grunt-contrib-qunit');
-    grunt.loadNpmTasks('grunt-contrib-yuidoc');
-    grunt.loadNpmTasks('grunt-contrib-requirejs');
+    var glob = require('glob'),
+        source = glob.sync('js/**/*.js').filter(function(v) { return v.indexOf('vendor') === -1; }),
+        testPort = grunt.option('port-test') || 9002,
+        banner = [
+            '/**',
+            ' * @license',
+            ' * <%= pkg.longName %> - v<%= pkg.version %>',
+            ' * Copyright (c) 2012, Chad Engler',
+            ' * <%= pkg.homepage %>',
+            ' *',
+            ' * Compiled: <%= grunt.template.today("yyyy-mm-dd") %>',
+            ' *',
+            ' * <%= pkg.longName %> is licensed under the <%= pkg.license %> License.',
+            ' * <%= pkg.licenseUrl %>',
+            ' */',
+            ''
+        ].join('\n');
 
     //Project Configuration
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         dirs: {
-            build: 'docs',
+            dist: 'build',
             docs: 'docs',
-            src: 'src',
-            test: 'test'
+            src: 'js',
+            test: 'test',
+            less: 'less'
         },
         files: {
-            srcBlob: '<%= dirs.src %>/**/*.js',
-            testBlob: '<%= dirs.test %>/**/*.js',
-            build: '<%= dirs.build %>/<%= pkg.name %>'
+            mainJs: '<%= dirs.src %>/main.js',
+            mainLess: '<%= dirs.less %>/main.less',
+            devJs: '<%= dirs.dist %>/js/<%= pkg.name %>.js',
+            distJs: '<%= dirs.dist %>/js/<%= pkg.name %>.min.js',
+            devCss: '<%= dirs.dist %>/css/<%= pkg.name %>.js',
+            distCss: '<%= dirs.dist %>/css/<%= pkg.name %>.min.js'
         },
         jshint: {
-            all: ['<%= files.srcBlob %>', '<%= files.testBlob %>'],
+            src: source.concat('Gruntfile.js'),
             options: {
-                /* Enforcement options */
-                bitwise: false,     //allow bitwise operators
-                camelcase: false,   //must use camelCase or UPPER_CASE
-                curly: false,       //one line conditionals w/o braces are allowed
-                eqeqeq: true,       //must use === if possible
-                forin: false,       //forin loops much check hasOwnProperty
-                immed: true,        //self-calling functions must be wrapped in parens
-                latedef: true,      //can't use a variable until it is defined
-                newcap: true,       //ctor names must be Captialized
-                noarg: true,        //arguments.caller/callee are deprecated, disallow
-                noempty: true,      //warn about empty blocks
-                nonew: true,        //no using `new Constructor();` without saving the value (no using only side-effects)
-                plusplus: false,    //you can use unary increment and decrement operators
-                quotmark: true,     //quotes must be consistent
-                unused: true,       //warn about declared but not used variables
-                strict: false,      //do not require functions to be run in strict-mode
-                trailing: true,     //help prevent weird whitespace errors in multi-line strings using \ 
-                maxlen: 120,        //no line should be longer than 120 characters
-
-                /* Relaxing Options */
-                boss: true,         //do not warn about the use of assignments in cases where comparisons are expected
-
-                /* Environments */
-                browser: true,      //this runs in a browser :)
-                devel: false,       //warn about using console.log and the like
-                jquery: true,       //this uses jquery
-                node: false,        //no node support
-                worker: true,       //web-workers are used
-
-                /* Globals */
-                undef: true,
-                globals: {
-                    /* For tests */
-                    QUnit: false,
-                    Q: false,
-
-                    /* Globals used in code */
-                    PIXI: false,
-                    TWEEN: false,
-                    requirejs: false,
-                    require: false,
-                    define: false,
-                    $: false,
-                    gf: false
-                }
+                jshintrc: '.jshintrc'
             }
         },
         connect: {
-            qunit: {
+            dev: {
                 options: {
-                    port: grunt.option('port-test') || 9002,
-                    base: './test/'
-                }
-            },
-            serve: {
-                options: {
-                    port: grunt.option('port-test') || 9002,
+                    port: testPort,
                     base: './',
                     keepalive: true
-                }
-            }
-        },
-        qunit: {
-            all: {
-                options: {
-                    urls: ['http://localhost:' + (grunt.option('port-test') || 9002) + '/test/index.html']
                 }
             }
         },
@@ -97,35 +54,66 @@ module.exports = function(grunt) {
             compile: {
                 name: '<%= pkg.longName %>',
                 description: '<%= pkg.description %>',
-                version: '<%= pkg.version %>',
+                version: 'v<%= pkg.version %>',
                 url: '<%= pkg.homepage %>',
+                logo: 'http://www.gravatar.com/avatar/e60ee7bcb380d1ab175251890046b3d8.png',
                 options: {
                     paths: '<%= dirs.src %>',
+                    exclude: 'vendor',
                     outdir: '<%= dirs.docs %>'
                 }
             }
         },
         requirejs: {
-            compile: {
+            dev: {
                 options: {
                     baseUrl: '<%= dirs.src %>',
-                    mainConfigFile: 'main.js',
-                    out: '<%= files.build %>',
+                    mainConfigFile: '<%= files.mainJs %>',
+                    out: '<%= files.dev %>',
                     wrap: true
                 }
+            }
+        },
+        less: {
+            options: {
+                paths: ['<%= dirs.less %>']
+            },
+            dev: {
+                files: {
+                    '<%= files.devCss %>': '<%= files.lessMain %>'
+                }
+            },
+            dist: {
+                options: {
+                    yuicompress: true
+                },
+                files: {
+                    '<%= files.distCss %>': '<%= files.lessMain %>'
+                }
+            }
+        },
+        watch: {
+            options: {
+                interrupt: true,
+                spawn: false
+            },
+            src: {
+                files: ['<%= dirs.src %>/**/*.js'],
+                tasks: ['build']
             }
         }
     });
 
-    //default task
-    grunt.registerTask('default', ['hint', 'test', 'build']);
+    grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-connect');
+    grunt.loadNpmTasks('grunt-contrib-yuidoc');
+    grunt.loadNpmTasks('grunt-contrib-requirejs');
+    grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-less');
 
-    //main tasks
-    grunt.registerTask('build', ['requirejs:compile']);
-    grunt.registerTask('test', ['connect:qunit', 'qunit:all']);
-    grunt.registerTask('hint', ['jshint:all']);
-
-    //extras
+    //setup shortcut tasks
+    grunt.registerTask('default', ['jshint', 'build']);
+    grunt.registerTask('build', ['requirejs:dev', 'less:dev', 'less:dist']);
     grunt.registerTask('docs', ['yuidoc:compile']);
-    grunt.registerTask('dev', ['connect:serve']);
+    grunt.registerTask('dev', ['build', 'watch:src']);
 };
