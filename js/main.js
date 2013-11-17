@@ -4,7 +4,6 @@ require([
 ], function(gf, resources) {
     var $game,
         game,
-        muted,
         txtLoading;
 
     function runGame() {
@@ -16,19 +15,20 @@ require([
         // - Run your game!
 
         //hide loading text
-        txtLoading.hide();
+        txtLoading.visible = false;
     }
 
     //updates the loading progress on the screen
     function loadProgress(val) {
-        lttp.loading.setText('Loading: ' + val + '%');
+        txtLoading.setText('Loading: ' + val + '%');
     }
 
     //is called when preload resources are ready, this will start loading startup resources
     function startup() {
         //setup loading text.
         txtLoading = new gf.Text('Loading: 0%');
-        txtLoading.setPosition(225, 300);
+        txtLoading.position.x = 225;
+        txtLoading.position.y = 300;
         game.camera.add.obj(txtLoading);
 
         //load startup resources

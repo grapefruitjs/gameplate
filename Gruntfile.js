@@ -41,6 +41,20 @@ module.exports = function(grunt) {
                 jshintrc: '.jshintrc'
             }
         },
+        concat: {
+            options: {
+                stripBanners: true,
+                banner: banner
+            },
+            dev: {
+                src: ['<%= files.devJs %>'],
+                dest: '<%= files.devJs %>'
+            },
+            dist: {
+                src: ['<%= files.distJs %>'],
+                dest: '<%= files.distJs %>'
+            }
+        },
         connect: {
             dev: {
                 options: {
@@ -65,10 +79,10 @@ module.exports = function(grunt) {
             }
         },
         requirejs: {
-            dev: {
+            dist: {
                 options: {
                     baseUrl: '<%= dirs.src %>',
-                    mainConfigFile: '<%= files.mainJs %>',
+                    name: '<%= files.mainJs %>',
                     out: '<%= files.dev %>',
                     wrap: true
                 }
@@ -80,7 +94,7 @@ module.exports = function(grunt) {
             },
             dev: {
                 files: {
-                    '<%= files.devCss %>': '<%= files.lessMain %>'
+                    '<%= files.devCss %>': '<%= files.mainLess %>'
                 }
             },
             dist: {
@@ -88,7 +102,7 @@ module.exports = function(grunt) {
                     yuicompress: true
                 },
                 files: {
-                    '<%= files.distCss %>': '<%= files.lessMain %>'
+                    '<%= files.distCss %>': '<%= files.mainLess %>'
                 }
             }
         },
@@ -110,10 +124,11 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-contrib-concat');
 
     //setup shortcut tasks
     grunt.registerTask('default', ['jshint', 'build']);
-    grunt.registerTask('build', ['requirejs:dev', 'less:dev', 'less:dist']);
+    grunt.registerTask('build', ['requirejs:dist', 'less:dev', 'less:dist']);
     grunt.registerTask('docs', ['yuidoc:compile']);
     grunt.registerTask('dev', ['build', 'watch:src']);
 };

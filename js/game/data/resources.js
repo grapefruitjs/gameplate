@@ -1,4 +1,17 @@
 define(['vendor/gf'], function(gf) {
+    function _setup(game, progress, complete) {
+        if(progress)
+            game.load.on('progress', progress);
+
+        game.load.once('complete', function() {
+            if(progress)
+                game.load.off('progress', progress);
+
+            if(complete)
+                complete();
+        });
+    }
+
     return {
         /**
          * Items required for the preloader to display
@@ -34,17 +47,4 @@ define(['vendor/gf'], function(gf) {
             game.load.start();
         }
     };
-
-    function _setup(game, progress, complete) {
-        if(progress)
-            game.load.on('progress', progress);
-
-        game.load.once('complete', function() {
-            if(progress)
-                game.load.off('progress', progress);
-
-            if(complete)
-                complete();
-        });
-    }
 });
