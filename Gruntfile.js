@@ -28,7 +28,7 @@ module.exports = function(grunt) {
             less: 'less'
         },
         files: {
-            mainJs: '<%= dirs.src %>/main.js',
+            mainJs: 'main',
             mainLess: '<%= dirs.less %>/main.less',
             devJs: '<%= dirs.dist %>/js/<%= pkg.name %>.js',
             distJs: '<%= dirs.dist %>/js/<%= pkg.name %>.min.js',
